@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고대생을 위한 오늘 뭐 먹지? 추천봇 Pro 🐯</title>
+    <style>
+        :root {
+            --ku-crimson: #8A1538;     
+            --soft-pink: #FFF0F2;      
+            --point-coral: #FF7689;    
+            --text-main: #2A2425;      
+        }
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #FDF9F9;  
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-main);
+        }
+        .container {
+            max-width: 460px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px 25px;
+            border-radius: 24px;        
+            box-shadow: 0 12px 30px rgba(138, 21, 56, 0.08); 
+            border: 3px solid #FFE1E5;   
+        }
+        
+        h1 {
+            color: var(--ku-crimson);
+            font-size: 26px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .desc {
+            color: #6A5B5D;
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .today-pick-card {
+            background: #FFF9FA;
+            border: 2px dashed #FFAEB9;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .today-date {
+            font-size: 12px;
+            color: var(--ku-crimson);
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: inline-block;
+            background: #FFE3E7;
+            padding: 3px 12px;
+            border-radius: 12px;
+        }
+        
+        .filter-group {
+            margin-bottom: 22px;
+        }
+        .filter-select {
+            padding: 12px 15px;
+            border: 2px solid #FFE1E5;
+            border-radius: 14px;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+            color: var(--text-main);
+            background-color: #FFF;
+            cursor: pointer;
+            font-weight: bold;
+            transition: border-color 0.2s;
+        }
+        .filter-select:focus {
+            border-color: var(--point-coral);
+        }
+
+        .btn {
+            background-color: var(--ku-crimson);
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 16px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.15s;
+            box-shadow: 0 5px 0px #5A0E24; 
+            outline: none;
+        }
+        .btn:hover {
+            background-color: #9C1B42;
+            transform: translateY(1px);
+            box-shadow: 0 4px 0px #5A0E24;
+        }
+        .btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0px #5A0E24;
+        }
+        
+        #result-box {
+            margin-top: 35px;
+            padding: 22px;
+            background-color: #FFF9FA;
+            border: 2px solid #FFE1E5;
+            border-radius: 16px;
+            display: none;
+            animation: popUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popUp {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .menu-name {
+            font-size: 23px;
+            font-weight: bold;
+            color: var(--ku-crimson);
+            margin: 0 0 8px 0;
+        }
+        .menu-tag {
+            display: inline-block;
+            background-color: #FFE3E7;
+            color: var(--ku-crimson);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .menu-comment {
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+            background: #fff;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #FFE1E5;
+        }
+
+        .add-menu-section {
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 2px dashed #FFE1E5;
+            text-align: left;
+        }
+        .add-menu-section h3 {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .input-group input, .input-group select {
+            padding: 12px;
+            border: 2px solid #FFE1E5;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-main);
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: var(--point-coral);
+        }
+        .btn-sub {
+            background-color: #E6ECF4; 
+            color: #4A5568;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 0px #CBD5E0;
+            transition: all 0.1s;
+            outline: none;
+        }
+        .btn-sub:hover {
+            background-color: #DDE4EE;
+            transform: translateY(1px);
+            box-shadow: 0 3px 0px #CBD5E0;
+        }
+        .btn-sub:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px #CBD5E0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🐯 오늘 뭐 먹지? 추천봇 Pro</h1>
+    <p class="desc">결정장애가 온 고대 학우들을 위한 스마트 메뉴 추천 시스템<br>요일별 자동 테마 및 카테고리 필터링이 지원됩니다.</p>
+    
+    <div class="today-pick-card">
+        <div class="today-date" id="live-date">날짜 계산 중...</div>
+        <div style="font-size: 14px; line-height: 1.5; color: #444;" id="live-theme">
+            데이터 동기화 중...
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <select id="category-filter" class="filter-select">
+            <option value="전체">💡 종류 상관없이 전체 메뉴 추천</option>
+            <option value="한식">🍚 든든한 학식 감성, 한식 골라줘</option>
+            <option value="일식">🍣 깔끔하고 정갈하게, 일식 골라줘</option>
+            <option value="양식">🍕 가끔은 분위기 있게, 양식 골라줘</option>
+            <option value="중식">🍜 화끈한 불맛 충전, 중식 골라줘</option>
+            <option value="분식">🌶️ 매콤달콤 가성비, 분식 골라줘</option>
+        </select>
+    </div>
+    
+    <button class="btn" onclick="pickMenu()">🎲 오늘의 추천 메뉴 확인하기</button>
+
+    <div id="result-box">
+        <p class="menu-name" id="display-name">메뉴 이름</p>
+        <span class="menu-tag" id="display-tag">카테고리</span>
+        <p class="menu-comment" id="display-comment">한마디 평</p>
+    </div>
+
+    <div class="add-menu-section">
+        <h3>💡 우리만 아는 안암 숨은 맛집/메뉴 제보하기</h3>
+        <div class="input-group">
+            <input type="text" id="new-menu-name" placeholder="예: 정후 뚝배기 제육">
+            <select id="new-menu-tag">
+                <option value="한식">한식</option>
+                <option value="일식">일식</option>
+                <option value="양식">양식</option>
+                <option value="중식">중식</option>
+                <option value="분식">분식</option>
+            </select>
+            <input type="text" id="new-menu-comment" placeholder="예: 양 정말 많고 이모님이 친절하셔요.">
+        </div>
+        <button class="btn-sub" onclick="addNewMenu()">➕ 데이터베이스에 메뉴 등록</button>
+    </div>
+</div>
+
+<script>
+    // 풍성하게 확장된 23가지 안암 최적화 메뉴 리스트
+    let menuList = [
+        // 한식 (5개)
+        { name: "따끈한 김치찌개 🥘", tag: "한식", comment: "얼큰한 국물에 밥 한 공기 뚝딱! 역시 실패 없는 최고의 한식이죠." },
+        { name: "호불호 제로 제육볶음 🥩", tag: "한식", comment: "든든함 끝판왕! 정대후문 감성 가득 배부르게 먹을 수 있습니다." },
+        { name: "순살 찜닭 🍗", tag: "한식", comment: "달달 짭조름한 간장 소스에 당면 사리 추가는 국룰, 밥 슥슥 비벼 먹기 최고!" },
+        { name: "순두부찌개 🍲", tag: "한식", comment: "몽글몽글한 순두부에 달걀 톡! 뜨끈하고 부드럽게 속 풀기 좋은 메뉴." },
+        { name: "든든한 갈비탕 🥣", tag: "한식", comment: "고기 듬뿍 맑고 진한 국물, 시험 기간 기력 보충용으로 강력 추천합니다." },
+
+        // 일식 (5개)
+        { name: "바삭한 일식 돈카츠 🐷", tag: "일식", comment: "겉바속촉 돈카츠에 우동 한 그릇 곁들이면 완벽한 주말 식사 완성." },
+        { name: "신선한 연어초밥 🍣", tag: "일식", comment: "부담스럽지 않고 부드러우며 깔끔하게 먹고 싶을 때 추천하는 메뉴." },
+        { name: "따끈한 가츠동 (돈까스덮밥) 🍛", tag: "일식", comment: "단짠 소스가 사르르 밴 돈까스 계란 덮밥, 한 그릇 뚝딱 가성비 정석." },
+        { name: "시원 고소한 탄탄멘 🍜", tag: "일식", comment: "땅콩 소스의 고소함과 고추기름의 매콤함이 어우러진 이색 라멘 선택." },
+        { name: "두툼한 사케동 (연어덮밥) Bowl", tag: "일식", comment: "와사비 살짝 얹어서 밥이랑 같이 떠먹으면 입안에서 녹아내립니다." },
+
+        // 양식 (4개)
+        { name: "육즙 가득 수제버거 🍔", tag: "양식", comment: "바삭한 감자튀김에 시원한 콜라까지, 깔끔하고 확실한 미쿡의 맛." },
+        { name: "치즈 듬뿍 화덕피자 🍕", tag: "양식", comment: "쭉 늘어나는 고소한 치즈와 풍성한 토핑, 동기들과 1인 1판 각!" },
+        { name: "꾸덕한 베이컨 크림 파스타 🍝", tag: "양식", comment: "진하고 고소한 크림소스가 땡기는 날엔 무조건 이 메뉴를 고르세요." },
+        { name: "바비큐 플래터 🍖", tag: "양식", comment: "훈제 고기와 모닝빵, 코울슬로의 조화! 밥약이나 특별한 날에 어울려요." },
+
+        // 중식 (4개)
+        { name: "얼큰한 차돌짬뽕 🍜", tag: "중식", comment: "진한 고기 국물과 불맛 면발의 조화! 해장용이나 스트레스 해소용 강추." },
+        { name: "중독성 갑 마라탕 🌶️", tag: "중식", comment: "원하는 재료 팍팍 넣고 꿔바로우까지 곁들이면 오늘 한 끼 대만족." },
+        { name: "바삭 달콤 탕수육과 짜장면 🥢", tag: "중식", comment: "중식의 영원한 올타임 레전드 콤비, 절대 실패할 수 없는 조합." },
+        { name: "고슬고슬 게살볶음밥 🍳", tag: "중식", comment: "기름 코팅 제대로 된 밥알에 짜장 소스 슥슥 비벼 먹는 든든함." },
+
+        // 분식 (5개)
+        { name: "매콤달콤 국물떡볶이 🍡", tag: "분식", comment: "튀김과 순대를 국물에 푸욱 찍어 먹으면 눈물 나게 맛있는 조합." },
+        { name: "참치 듬뿍 왕김밥 🍙", tag: "분식", comment: "바쁜 날 스피디하고 영양 가득하게 채울 수 있는 최고의 메이트." },
+        { name: "바삭한 모둠튀김과 라면 🍜", tag: "분식", comment: "양은냄비에 끓인 꼬들라면과 바삭한 튀김의 환상적인 하모니." },
+        { name: "매콤새콤 비빔만두 🥟", tag: "분식", comment: "바삭하게 구운 납작만두에 아삭한 채소 무침을 싸 먹는 별미." },
+        { name: "철판 김치볶음밥 🍳", tag: "분식", comment: "반숙 계란프라이 톡 터트려서 김가루랑 비벼 먹는 추억의 맛." }
+    ];
+
+    window.onload = function() {
+        const weeks = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const today = new Date();
+        
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+        const date = today.getDate();
+        const dayName = weeks[today.getDay()];
+        
+        document.getElementById('live-date').innerText = `📅 ${year}년 ${month}월 ${date}일 ${dayName}`;
+        
+        const themeList = {
+            '월요일': "✨ 월요병 타파 테마: <strong>[정신 번쩍]</strong> 화끈한 국물로 한 주를 시작하게 해줄 매콤 차돌짬뽕을 추천합니다!",
+            '화요일': "✨ 가성비 화요일 테마: <strong>[든든한 학식 감성]</strong> 호불호 절대 없는 든든한 제육볶음은 어떠신가요?",
+            '수요일': "✨ 일주일의 절반 수요일: <strong>[리프레시]</strong> 동기들과 함께 피자 한 판 나눠 먹으며 힐링해 보세요.",
+            '목요일': "✨ 다가오는 주말 테마: <strong>[깔끔 정갈]</strong> 부담 없이 산뜻하게 즐길 수 있는 연어초밥을 강력 추천해요!",
+            '금요일': "✨ 불타는 금요일 테마: <strong>[치팅 데이]</strong> 한 주 동안 수고한 나에게 육즙 가득한 수제버거 세트를 선물하세요.",
+            '토요일': "✨ 주말의 여유 테마: <strong>[완벽한 휴식]</strong> 바삭한 돈카츠를 먹으며 주말의 여유를 만끽해 보시길 바랍니다.",
+            '일요일': "✨ 포근한 마무리 일요일: <strong>[에너지 충전]</strong> 집밥 감성 그대로, 따끈한 김치찌개로 다가올 주말을 준비해 보아요."
+        };
+        
+        document.getElementById('live-theme').innerHTML = themeList[dayName];
+    }
+
+    function pickMenu() {
+        const filterValue = document.getElementById('category-filter').value;
+        let filteredList = menuList;
+        
+        if (filterValue !== "전체") {
+            filteredList = menuList.filter(item => item.tag === filterValue);
+        }
+
+        if (filteredList.length === 0) {
+            alert("선택하신 카테고리에는 등록된 메뉴가 없습니다! 하단에서 첫 메뉴를 제보해 주세요.");
+            return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * filteredList.length);
+        const selected = filteredList[randomIndex];
+
+        document.getElementById('display-name').innerText = selected.name;
+        document.getElementById('display-tag').innerText = "🏷️ " + selected.tag;
+        document.getElementById('display-comment').innerText = selected.comment;
+        
+        document.getElementById('result-box').style.display = 'block';
+    }
+
+    function addNewMenu() {
+        const nameInput = document.getElementById('new-menu-name');
+        const tagInput = document.getElementById('new-menu-tag');
+        const commentInput = document.getElementById('new-menu-comment');
+
+        if (!nameInput.value.trim() || !commentInput.value.trim()) {
+            alert("메뉴 이름과 한마디 평을 모두 정확하게 입력해 주세요.");
+            return;
+        }
+
+        menuList.push({
+            name: nameInput.value + " ✨",
+            tag: tagInput.value,
+            comment: commentInput.value
+        });
+
+        alert(`🎉 학우님이 제보해주신 '${nameInput.value}' 메뉴가 등록되었습니다! 상단 추천 룰렛에 즉시 포함됩니다.`);
+        nameInput.value = '';
+        commentInput.value = '';
+    }
+</script>
+
+</body>
+</html>
