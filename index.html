@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고대생을 위한 오늘 뭐 먹지? 추천봇 🐯</title>
+    <style>
+        :root {
+            --ku-crimson: #8A1538;     /* 고대 시그니처 크림슨 */
+            --soft-pink: #FFF0F2;      /* 은은하고 부드러운 핑크 배경 */
+            --point-coral: #FF7689;    /* 톡톡 튀는 포인트 코랄 */
+            --text-main: #2A2425;      /* 깔끔하고 가독성 좋은 어두운 색 */
+        }
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #FDF9F9;  /* 포근하고 깨끗한 화이트스모크 핑크 배경 */
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-main);
+        }
+        .container {
+            max-width: 460px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px 25px;
+            border-radius: 24px;        /* 세련되게 동글동글한 라운딩 */
+            box-shadow: 0 12px 30px rgba(138, 21, 56, 0.08); /* 크림슨 톤의 부드러운 그림자 */
+            border: 3px solid #FFE1E5;   /* 깔끔한 외곽 테두리 */
+        }
+        
+        h1 {
+            color: var(--ku-crimson);
+            font-size: 26px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .desc {
+            color: #6A5B5D;
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        /* 요일별 자동화 카드 디자인 (둥글고 화사하게) */
+        .today-pick-card {
+            background: #FFF9FA;
+            border: 2px dashed #FFAEB9;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .today-date {
+            font-size: 12px;
+            color: var(--ku-crimson);
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: inline-block;
+            background: #FFE3E7;
+            padding: 3px 12px;
+            border-radius: 12px;
+        }
+        
+        /* 드롭다운 선택창 디자인 */
+        .filter-group {
+            margin-bottom: 22px;
+        }
+        .filter-select {
+            padding: 12px 15px;
+            border: 2px solid #FFE1E5;
+            border-radius: 14px;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+            color: var(--text-main);
+            background-color: #FFF;
+            cursor: pointer;
+            font-weight: bold;
+            transition: border-color 0.2s;
+        }
+        .filter-select:focus {
+            border-color: var(--point-coral);
+        }
+
+        /* 세련된 입체감을 주는 크림슨 버튼 */
+        .btn {
+            background-color: var(--ku-crimson);
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 16px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.15s;
+            box-shadow: 0 5px 0px #5A0E24; /* 버튼 아래쪽에 확실한 입체감 추가 */
+        }
+        .btn:hover {
+            background-color: #9C1B42;
+            transform: translateY(1px);
+            box-shadow: 0 4px 0px #5A0E24;
+        }
+        .btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0px #5A0E24;
+        }
+        
+        /* 통통 튀며 등장하는 결과창 */
+        #result-box {
+            margin-top: 35px;
+            padding: 22px;
+            background-color: #FFF9FA;
+            border: 2px solid #FFE1E5;
+            border-radius: 16px;
+            display: none;
+            animation: popUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popUp {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .menu-name {
+            font-size: 23px;
+            font-weight: bold;
+            color: var(--ku-crimson);
+            margin: 0 0 8px 0;
+        }
+        .menu-tag {
+            display: inline-block;
+            background-color: #FFE3E7;
+            color: var(--ku-crimson);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .menu-comment {
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+            background: #fff;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #FFE1E5;
+        }
+
+        /* 하단 커스텀 메뉴 추가 섹션 */
+        .add-menu-section {
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 2px dashed #FFE1E5;
+            text-align: left;
+        }
+        .add-menu-section h3 {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .input-group input, .input-group select {
+            padding: 12px;
+            border: 2px solid #FFE1E5;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-main);
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: var(--point-coral);
+        }
+        .btn-sub {
+            background-color: #E6ECF4; /* 세련된 파스텔 블루 그레이 */
+            color: #4A5568;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 0px #CBD5E0;
+            transition: all 0.1s;
+        }
+        .btn-sub:hover {
+            background-color: #DDE4EE;
+            transform: translateY(1px);
+            box-shadow: 0 3px 0px #CBD5E0;
+        }
+        .btn-sub:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px #CBD5E0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🐯 오늘 뭐 먹지? 추천봇 Pro</h1>
+    <p class="desc">결정장애가 온 고대 학우들을 위한 스마트 메뉴 추천 시스템<br>요일별 자동 테마 및 카테고리 필터링이 지원됩니다.</p>
+    
+    <div class="today-pick-card">
+        <div class="today-date" id="live-date">날짜 계산 중...</div>
+        <div style="font-size: 14px; line-height: 1.5; color: #444;" id="live-theme">
+            데이터 동기화 중...
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <select id="category-filter" class="filter-select">
+            <option value="전체">💡 종류 상관없이 전체 메뉴 추천</option>
+            <option value="한식">🍚 든든한 학식 감성, 한식 골라줘</option>
+            <option value="일식">🍣 깔끔하고 정갈하게, 일식 골라줘</option>
+            <option value="양식">🍕 가끔은 분위기 있게, 양식 골라줘</option>
+            <option value="중식">🍜 화끈한 불맛 충전, 중식 골라줘</option>
+            <option value="분식">🌶️ 매콤달콤 가성비, 분식 골라줘</option>
+        </select>
+    </div>
+    
+    <button class="btn" onclick="pickMenu()">🎲 오늘의 추천 메뉴 확인하기</button>
+
+    <div id="result-box">
+        <p class="menu-name" id="display-name">메뉴 이름</p>
+        <span class="menu-tag" id="display-tag">카테고리</span>
+        <p class="menu-comment" id="display-comment">한마디 평</p>
+    </div>
+
+    <div class="add-menu-section">
+        <h3>💡 우리만 아는 안암 숨은 맛집/메뉴 제보하기</h3>
+        <div class="input-group">
+            <input type="text" id="new-menu-name" placeholder="예: 정후 뚝배기 제육">
+            <select id="new-menu-tag">
+                <option value="한식">한식</option>
+                <option value="일식">일식</option>
+                <option value="양식">양식</option>
+                <option value="중식">중식</option>
+                <option value="분식">분식</option>
+            </select>
+            <input type="text" id="new-menu-comment" placeholder="예:
