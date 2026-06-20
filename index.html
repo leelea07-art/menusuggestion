@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오늘 뭐 먹지? - 식사 메뉴 추천봇</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 450px;
+            margin: 60px auto;
+            background: white;
+            padding: 35px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-top: 8px solid #8A1538;
+        }
+        h1 {
+            color: #8A1538;
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+        .desc {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background-color: #8A1538;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn:hover {
+            background-color: #5a0e24;
+        }
+        #result-box {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fdfbf7;
+            border: 1px dashed #8A1538;
+            border-radius: 8px;
+            display: none;
+        }
+        .menu-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #111;
+            margin: 0 0 10px 0;
+        }
+        .menu-tag {
+            display: inline-block;
+            background-color: #eaeaea;
+            color: #444;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .menu-comment {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🐯 오늘 뭐 먹지? 추천봇</h1>
+    <p class="desc">결정장애가 온 고대 학우들을 위한 초간단 메뉴 추천 시스템!<br>아래 버튼을 누르면 메뉴를 무작위로 골라줍니다.</p>
+    
+    <button class="btn" onclick="pickMenu()">🎲 오늘의 메뉴 추천받기</button>
+
+    <div id="result-box">
+        <p class="menu-name" id="display-name">메뉴 이름</p>
+        <span class="menu-tag" id="display-tag">카테고리</span>
+        <p class="menu-comment" id="display-comment">한마디 평</p>
+    </div>
+</div>
+
+<script>
+    function pickMenu() {
+        const menuList = [
+            { name: "따끈한 김치찌개", tag: "한식", comment: "얼큰한 국물에 밥 한 공기 뚝딱! 역시 한국인은 한식이죠." },
+            { name: "바삭한 돈카츠", tag: "일식", comment: "겉바속촉 돈카츠에 우동 한 그릇 곁들이면 최고의 한 끼 완성!" },
+            { name: "매콤달콤 떡볶이", tag: "분식", comment: "튀김이랑 순대까지 세트로 묶어서 먹으면 스트레스 해소 완료." },
+            { name: "육즙 가득 수제버거", tag: "양식", comment: "바삭한 감자튀김에 시원한 콜라까지, 깔끔하고 확실한 선택!" },
+            { name: "얼큰한 차돌짬뽕", tag: "중식", comment: "진한 고기 국물 coffee와 쫄깃한 면발의 조화! 군만두 추가는 필수." },
+            { name: "신선한 연어초밥", tag: "일식", comment: "부담스럽지 않고 깔끔하게 먹고 싶을 때 최고의 선택입니다." },
+            { name: "든든한 제육볶음", tag: "한식", comment: "호불호 제로! 배부르게 먹을 수 있어요." },
+            { name: "치즈 듬뿍 피자", tag: "양식", comment: "쭉 늘어나는 치즈와 토핑 가득한 피자로 오늘 한 끼는 특별하게!" }
+        ];
+
+        const randomIndex = Math.floor(Math.random() * menuList.length);
+        const selected = menuList[randomIndex];
+
+        document.getElementById('display-name').innerText = selected.name;
+        document.getElementById('display-tag').innerText = selected.tag;
+        document.getElementById('display-comment').innerText = selected.comment;
+        
+        document.getElementById('result-box').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
